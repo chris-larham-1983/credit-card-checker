@@ -88,7 +88,17 @@ const idInvalidCardCompanies = nestedArray => {
 
 console.log(idInvalidCardCompanies(batch)); //correctly prints out an array of non-repeated company names in the order 'Visa', 'Mastercard', 'Amex (American Express)', 'Discover' as expected
 
+const stringToNumbers = string => { //function to convert an input string into an array of numbers
+  string = string.replace(' ', ''); //remove whitespace from the input string
+  const characters = string.split(''); //split string into an array of characters
+  const numbers = []; //declare a number array
+  for(let index = 0; index < characters.length; index++) { //for as long as there are elements in the characters array
+    numbers.push(parseInt(characters[index])); //add the integer representation of the current character element to the numbers array
+  }
+  return numbers; //return the numbers array
+}
 
+console.log(stringToNumbers("4532778771091795")); //correctly logs an array of numbers
 
 
 
