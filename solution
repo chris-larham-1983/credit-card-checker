@@ -50,9 +50,9 @@ const modulo10 = checkedNums => {
   for(let index = 0; index < checkedNums.length; index++) {
     sum += checkedNums[index];
   }
-  //console.log(sum); used for debugging
+  //console.log("Sum: " + sum); //used for debugging
   return sum % 10 === 0? true:false;
-}
+};
 
 console.log(validateCred(valid1)); //Expect true; all the 'valid'-prefixed arrays return true
 console.log(validateCred(invalid5)); //Expect false; all the 'invalid'-prefixed arrays return false
@@ -88,7 +88,7 @@ const idInvalidCardCompanies = nestedArray => {
 
 console.log(idInvalidCardCompanies(batch)); //correctly prints out an array of non-repeated company names in the order 'Visa', 'Mastercard', 'Amex (American Express)', 'Discover' as expected
 
-const stringToNumbers = string => { //function to convert an input string into an array of numbers
+const stringToNumbers = string => {
   string = string.replace(' ', ''); //remove whitespace from the input string
   const characters = string.split(''); //split string into an array of characters
   const numbers = []; //declare a number array
@@ -98,9 +98,57 @@ const stringToNumbers = string => { //function to convert an input string into a
   return numbers; //return the numbers array
 }
 
-console.log(stringToNumbers("4532778771091795")); //correctly logs an array of numbers
+// console.log(stringToNumbers("4532778771091795")); correctly logs an array of numbers
 
+const invalidToValid = inputArray => {
+  let checkedNums = []; //declare an array that will hold the relevant numbers from the inputArray
+  const arrayLength = inputArray.length - 1; //declare a variable that refers to the length of the inputArray - 1
+  for(let index = inputArray.length - 1; index >= 0; index--) {
+    if(index === inputArray.length - 1) { //if the index points to the 'check'
+      checkedNums.push(inputArray[index]); //add the 'check' to the checkedNums array
+    } else if ((arrayLength - index) % 2 == 0){ //otherwise, if the result of (arrayLength - index)/2 results in 0 remainder
+      checkedNums.push(inputArray[index]); //add the number that does not require mathematical operations performed upon it to the checkedNums array
+    } else { //the result of (arrayLength - index)/2 results in a remainder, thus mathematical operations are required upon this number
+      let modifiedNum = inputArray[index] * 2; //let the modifiedNum variable refer to (the value in the inputArray pointed to by index) multiplied by 2
+      if(modifiedNum > 9) { //if modifiedNum is greater than 9...
+        modifiedNum -= 9; //...subtract 9 from its value
+      }
+      checkedNums.push(modifiedNum); //add modifiedNum to the checkedNums array
+    }
+  }
+  checkedNums.reverse(); //reverse the elements in the checkedNums array so that they match the order of the inputArray and the correct 'check' variable is replaced 
+  inputArray[inputArray.length - 1] = calculateNewCheck(checkedNums); //return an array that has a validity-ensuring new 'check' number
+  console.log(inputArray); //proves that only the 'check' digit has been replaced from the original credit card number
+  return inputArray;
+};  
 
+const calculateNewCheck = checkedNums => { //function to calculate a new 'check' number that will guarantee that the card number is valid
+  let invalidNumber = 0; //initialize an invalidNumber variable equal to 0
+  for(let index = 0; index < checkedNums.length - 1; index++) { //for the length of the checkedNums array minus 1, ie ignoring the 'check' digit
+    invalidNumber += checkedNums[index]; //add the value of each checkedNums element to the invalidNumber
+  }
+  let newCheck = 10 - (invalidNumber % 10); //initialize a newCheck variable equal to the result of 10 - (the remainder of dividing invalidNumber by 10)
+  newCheck = newCheck === 10? 0:newCheck; //if newCheck is equal to 10, assign newCheck the value of 0; otherwise leave newCheck unchanged
+  return newCheck; //return the value of the calculated newCheck variable
+};
 
+//the following calls to console.log print false, as expected
+console.log(validateCred(invalid1));
+console.log(validateCred(invalid2));
+console.log(validateCred(invalid3));
+console.log(validateCred(invalid4));
+console.log(validateCred(invalid5));
+//convert the invalid numbers to valid numbers
+const noLongerInvalid1 = invalidToValid(invalid1);
+const noLongerInvalid2 = invalidToValid(invalid2);
+const noLongerInvalid3 = invalidToValid(invalid3);
+const noLongerInvalid4 = invalidToValid(invalid4);
+const noLongerInvalid5 = invalidToValid(invalid5);
+//the following calls to console.log print true, as expected
+console.log(validateCred(noLongerInvalid1));
+console.log(validateCred(noLongerInvalid2));
+console.log(validateCred(noLongerInvalid3));
+console.log(validateCred(noLongerInvalid4));
+console.log(validateCred(noLongerInvalid5));
 
 
